@@ -7,7 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:tugas_praktik/app/modules/form/views/form_view.dart';
+import 'package:tugas_praktik/app/modules/form/views/widgets/map_picker_view.dart';
 import 'package:tugas_praktik/app/modules/home/views/home_view.dart';
 
 class FormController extends GetxController {

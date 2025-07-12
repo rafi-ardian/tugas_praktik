@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 
 import '../modules/data/bindings/data_binding.dart';
 import '../modules/data/views/data_view.dart';
+import '../modules/detail/bindings/detail_binding.dart';
+import '../modules/detail/views/detail_view.dart';
 import '../modules/form/bindings/form_binding.dart';
 import '../modules/form/views/form_view.dart';
 import '../modules/home/bindings/home_binding.dart';
@@ -29,5 +31,10 @@ class AppPages {
     ),
     GetPage(name: _Paths.FORM, page: () => FormView(), binding: FormBinding()),
     GetPage(name: _Paths.DATA, page: () => DataView(), binding: DataBinding()),
+    GetPage(
+      name: _Paths.DETAIL,
+      page: () => DetailView(),
+      binding: DetailBinding(),
+    ),
   ];
 }

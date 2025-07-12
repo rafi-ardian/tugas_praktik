@@ -7,6 +7,7 @@ abstract class Routes {
   static const INFO = _Paths.INFO;
   static const FORM = _Paths.FORM;
   static const DATA = _Paths.DATA;
+  static const DETAIL = _Paths.DETAIL;
 }
 
 abstract class _Paths {
@@ -15,4 +16,5 @@ abstract class _Paths {
   static const INFO = '/info';
   static const FORM = '/form';
   static const DATA = '/data';
+  static const DETAIL = '/detail';
 }
