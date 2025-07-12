@@ -1,15 +1,13 @@
-import 'package:tugas_praktik/app/modules/form/views/form_view.dart';
+import 'package:tugas_praktik/app/modules/form/views/widgets/map_picker_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as devtools;
+import 'package:latlong2/latlong.dart';
 import 'package:intl/intl.dart';
+import 'dart:developer' as devtools;
 import 'package:get/get.dart';
 import 'dart:io';
-
-import 'package:tugas_praktik/app/modules/form/views/widgets/map_picker_view.dart';
 
 class DetailController extends GetxController {
   var nik = ''.obs;
@@ -22,9 +20,9 @@ class DetailController extends GetxController {
   var location = Rx<LatLng?>(null);
   var isLoading = false.obs;
   var isDeleting = false.obs;
+  var isDeletionComplete = false.obs;
   String? docId;
 
-  // Tambahkan TextEditingController
   final nikController = TextEditingController();
   final namaController = TextEditingController();
   final noHpController = TextEditingController();
@@ -44,25 +42,33 @@ class DetailController extends GetxController {
       alamat.value = args['alamat'] ?? '';
       gambarPath.value = args['gambarPath'];
 
-      if (args['location'] != null && args['location'] is String) {
+      devtools.log(
+        'Location data: ${args['location']?.runtimeType} - ${args['location']}',
+      );
+
+      if (args['location'] != null) {
         try {
-          // Parsing string "latitude,longitude"
-          final coords = args['location'].split(',');
-          if (coords.length == 2) {
-            final latitude = double.tryParse(coords[0].trim()) ?? 0.0;
-            final longitude = double.tryParse(coords[1].trim()) ?? 0.0;
+          if (args['location'] is Map<String, dynamic>) {
+            final latitude =
+                double.tryParse(args['location']['latitude'].toString()) ?? 0.0;
+            final longitude =
+                double.tryParse(args['location']['longitude'].toString()) ??
+                0.0;
             location.value = LatLng(latitude, longitude);
-          } else {
-            devtools.log('Invalid location format: ${args['location']}');
-            location.value = null;
+          } else if (args['location'] is String) {
+            final coords = args['location'].split(',');
+            if (coords.length == 2) {
+              final latitude = double.tryParse(coords[0].trim()) ?? 0.0;
+              final longitude = double.tryParse(coords[1].trim()) ?? 0.0;
+              location.value = LatLng(latitude, longitude);
+            }
           }
         } catch (e) {
           devtools.log('Error parsing location: $e');
-          location.value = null; // Set null jika parsing gagal
+          location.value = null;
         }
       }
 
-      // Inisialisasi TextEditingController dengan nilai awal
       nikController.text = nik.value;
       namaController.text = nama.value;
       noHpController.text = noHp.value;
@@ -130,8 +136,7 @@ class DetailController extends GetxController {
   }
 
   Future<void> pickLocation() async {
-    LatLng initialPosition =
-        location.value ?? LatLng(-6.1745, 106.8227); // Default Jakarta
+    LatLng initialPosition = location.value ?? LatLng(-6.1745, 106.8227);
     LatLng? selectedLocation = await Get.to(
       () => MapPickerView(initialPosition: initialPosition),
     );
@@ -145,10 +150,34 @@ class DetailController extends GetxController {
   }
 
   Future<void> updateData() async {
-    print("object");
     if (isLoading.value) return;
     isLoading.value = true;
     try {
+      if (nikController.text.isEmpty) {
+        Get.snackbar('Error', 'NIK harus diisi');
+        return;
+      }
+      if (namaController.text.isEmpty) {
+        Get.snackbar('Error', 'Nama Lengkap harus diisi');
+        return;
+      }
+      if (noHpController.text.isEmpty) {
+        Get.snackbar('Error', 'No. HP harus diisi');
+        return;
+      }
+      if (alamatController.text.isEmpty) {
+        Get.snackbar('Error', 'Alamat harus diisi');
+        return;
+      }
+      if (gambarPath.value == null) {
+        Get.snackbar('Error', 'Gambar harus dipilih atau difoto');
+        return;
+      }
+      if (location.value == null) {
+        Get.snackbar('Error', 'Lokasi harus dipilih');
+        return;
+      }
+
       if (docId != null) {
         await FirebaseFirestore.instance.collection('voters').doc(docId).update(
           {
@@ -189,12 +218,26 @@ class DetailController extends GetxController {
             .doc(docId)
             .delete();
         print("Data deleted");
-        Get.snackbar('Sukses', 'Data dihapus');
-        Get.back();
+
+        if (Get.context != null) {
+          Get.snackbar(
+            'Sukses',
+            'Data dihapus',
+            snackPosition: SnackPosition.BOTTOM,
+            duration: const Duration(seconds: 3),
+          );
+          isDeletionComplete.value = true;
+        } else {
+          print("No context available for Get.snackbar or Get.back");
+        }
       }
     } catch (e) {
-      print("error delete data");
-      Get.snackbar('Error', 'Gagal menghapus data: $e');
+      print("Error delete data: $e");
+      if (Get.context != null) {
+        Get.snackbar('Error', 'Gagal menghapus data: $e');
+      } else {
+        print("No context available to show error snackbar");
+      }
     } finally {
       isDeleting.value = false;
     }

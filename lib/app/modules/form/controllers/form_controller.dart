@@ -88,8 +88,32 @@ class FormController extends GetxController {
 
   Future<void> saveData() async {
     try {
+      if (nik.value.isEmpty) {
+        Get.snackbar('Error', 'NIK harus diisi');
+        return;
+      }
+      if (nama.value.isEmpty) {
+        Get.snackbar('Error', 'Nama harus diisi');
+        return;
+      }
+      if (noHp.value.isEmpty) {
+        Get.snackbar('Error', 'No. HP harus diisi');
+        return;
+      }
+      if (alamat.value.isEmpty) {
+        Get.snackbar('Error', 'Alamat harus diisi');
+        return;
+      }
+      if (tanggal.value.isEmpty) {
+        Get.snackbar('Error', 'Tanggal harus diisi');
+        return;
+      }
+      if (gambarPath.value == null) {
+        Get.snackbar('Error', 'Gambar harus dipilih atau difoto');
+        return;
+      }
       if (location.value == null) {
-        Get.snackbar('Error', 'Pilih lokasi terlebih dahulu');
+        Get.snackbar('Error', 'Lokasi harus dipilih');
         return;
       }
       await _firestore.collection('voters').add({
