@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "329580076742",
+    "project_id": "tugas-praktik-d876b",
+    "storage_bucket": "tugas-praktik-d876b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:329580076742:android:bad3bfdbf0346b183601c7",
+        "android_client_info": {
+          "package_name": "com.tugaspraktik.tugas_praktik"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhjrJ-5SSWgqcDEsqi-rhh0CajpE5-zo0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
